@@ -25,7 +25,7 @@ export default function TaskDetail() {
 
   //implementacion del metodo DELETE de la API REST para borrar una tarea
   async function deleteTask() {
-    const response = await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+    await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
       method: "DELETE",
     });
     navegate("/tasks");

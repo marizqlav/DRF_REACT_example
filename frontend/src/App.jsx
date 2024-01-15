@@ -9,6 +9,11 @@ import TaskDetail from "./pages/TaskDetail";
 import CreateTask from "./pages/CreateTask";
 import EditTask from "./pages/EditTask";
 
+import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
+import CreateProject from "./pages/CreateProject";
+import EditProject from "./pages/EditProject";
+
 export default function App() {
   return (
     <div>
@@ -25,6 +30,15 @@ export default function App() {
           <Route path="/createtask" element={<CreateTask />} />
           {/*EDITAR TAREA */}
           <Route path="/edittask/:id" element={<EditTask />} />
+          {/*CRUD DE PROYECTOS */}
+          {/*LISTA PROYECTOS */}
+          <Route path="/projects" element={<Projects />} />
+          {/*SHOW DE PROYECTO */}
+          <Route path="/project/:id" element={<ProjectDetail />} />
+          {/*CREAR PROYECTO */}
+          <Route path="/createproject" element={<CreateProject />} />
+          {/*EDITAR PROYECTO */}
+          <Route path="/editproject/:id" element={<EditProject />} />
         </Routes>
         <Footer />
       </Router>
