@@ -8,7 +8,7 @@ export default function Projects() {
 
   //2) llamada a la API para obtener las tareas
   async function getAllProjects() {
-    const response = await fetch("http://127.0.0.1:8000/api/projects/", {
+    const response = await fetch("https://mario.pythonanywhere.com/api/projects/", {
       method: "GET",
     });
     const data = await response.json();
