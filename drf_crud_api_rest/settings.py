@@ -37,13 +37,35 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
+    'corsheaders',  # para conectar front con back
     'rest_framework',
+    'rest_framework.authtoken',  # para autenticacion usando JWT
+    'djoser',  # para poder utilizar la  autenticacion
     'main',
 ]
 
+# para autenticacion
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    # agregando un token JWT de autenticación
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# agregando su token JWT de autenticación
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', # para conectar front con back
+    'corsheaders.middleware.CorsMiddleware',  # para conectar front con back
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
