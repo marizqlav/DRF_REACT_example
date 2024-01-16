@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 //creacion de tareas
 export default function CreateTask() {
@@ -7,7 +8,7 @@ export default function CreateTask() {
   const [task, setTask] = useState({
     title: "",
     description: "",
-    done: false, 
+    done: false,
   });
 
   //para redireccionar al usuario cuando creea una tarea nueva
@@ -35,21 +36,39 @@ export default function CreateTask() {
   //4)llamar al metodo de la API
   async function createTask(e) {
     e.preventDefault();
-    const response = await fetch("http://127.0.0.1:8000/api/tasks/", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(task),
-    });
+    Swal.fire({
+      title: "¿Estas seguro de que quieres crear la tarea?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch("http://127.0.0.1:8000/api/tasks/", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(task),
+        });
 
-    //6)validamos los errores del backend
-    if (response.status === 400) {
-      const data = await response.json();
-      setErrors(data);
-      return;
-    }
-    navegate("/tasks"); //redireccionamos al usuario a la lista de tareas
+        //6)validamos los errores del backend
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data);
+          return;
+        }
+
+        Swal.fire({
+          title: "Tarea creada",
+          text: "la tarea ha sido creada con exito",
+          icon: "success",
+        });
+        navegate("/tasks"); //redireccionamos al usuario a la lista de tareas
+      } else if (result.isDenied) {
+        navegate("/tasks");
+      }
+    });
   }
 
   return (

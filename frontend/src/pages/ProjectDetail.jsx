@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function ProjectDetail() {
   //1)creamos es estado inicial
@@ -29,9 +30,12 @@ export default function ProjectDetail() {
 
   //3.1) hacemos la peticion a la api para pillar las tareas del proyecto
   async function getProjectTasks(task_id) {
-    const response = await fetch(`http://127.0.0.1:8000/api/tasks/${task_id}/`, {
-      method: "GET",
-    });
+    const response = await fetch(
+      `http://127.0.0.1:8000/api/tasks/${task_id}/`,
+      {
+        method: "GET",
+      }
+    );
     return response.json();
   }
 
@@ -42,10 +46,28 @@ export default function ProjectDetail() {
 
   //implementacion del metodo DELETE de la API REST para borrar una tarea
   async function deleteProject() {
-    await fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
-      method: "DELETE",
+    Swal.fire({
+      title: "¿Estas seguro de que quieres borrar el proyecto?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
+          method: "DELETE",
+        });
+        navegate("/projects");
+
+        Swal.fire({
+          title: "Proyecto borrado",
+          text: "has eliminado el proyecto con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navigate("/");
+      }
     });
-    navegate("/projects");
   }
 
   return (
