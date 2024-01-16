@@ -35,6 +35,16 @@ export default function Register() {
   async function handleSubmit(e) {
     //onFormSubmit == handleSubmit
     e.preventDefault();
+
+    //8)invocar a la funcion de validacion
+    const errors = validateForm();
+
+    //9)comprobar si el tamaño de JSON de los errores es >0  para actualizar el estado de los errores(=>existen errores)
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      return;
+    }
+
     const response = await fetch("http://127.0.0.1:8000/auth/users/", {
       method: "POST",
       headers: {
@@ -49,6 +59,40 @@ export default function Register() {
       return;
     }
     navegate("/login");
+  }
+
+  //7) crear la funcion auxiliar que se encargara de validar las validaciones extra que no se valida en el backend
+  function validateForm() {
+    let errors = {};
+    //RN-1: first_name campo obligatorio
+    if (!form.first_name) {
+      errors.first_name = "El campo nombre es obligatorio";
+      //RN-2: first_name mas de 3 caracteres
+    } else if (form.first_name.length <= 3) {
+      errors.first_name = "El campo nombre debe de tener mas de 3 caracteres";
+    }
+    //RN-3: msima RN q la RN 1 pero pal last_name
+    if (!form.last_name) {
+      errors.last_name = "El campo apellido es obligatorio";
+      //RN-4: misma RN q la RN 2 pero pal last_name
+    } else if (form.last_name.length <= 3) {
+      errors.last_name = "El campo apellido debe de tener mas de 3 caracteres";
+    }
+    //RN-5: email validando q sea de gmail, outlook y hotmail sabiedno q esta es la fun en python:
+    //r'^\w+([.-]?\w+)*@(gmail|hotmail|outlook)\.com$
+    if (!form.email) {
+      errors.email = "El campo email es obligatorio";
+    } else if (
+      !/^\w+([.-]?\w+)*@(gmail|hotmail|outlook)\.com$/.test(form.email)
+    ) {
+      errors.email = "El campo email debe de ser de gmail, outlook o hotmail";
+    }
+    //RN-6) password = password2//validar q las contraseñas sean iguales
+    if (form.password !== form.password2) {
+      errors.password2 = "Las contraseñas no coinciden";
+    }
+
+    return errors;
   }
 
   return (
@@ -75,6 +119,9 @@ export default function Register() {
               onChange={(e) => onInputChange(e)} // llamada a la funcion que se encargara de actualizar el estado de la entidad
             />
             {/* validacion del campo del formulario */}
+            {errors.first_name && (
+              <p className="text-red-500 text-xs italic">{errors.first_name}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
@@ -91,6 +138,9 @@ export default function Register() {
               value={last_name} // valor del atributo de la entidad del backend
               onChange={(e) => onInputChange(e)} // llamada a la funcion que se encargara de actualizar el estado de la entidad
             />
+            {errors.last_name && (
+              <p className="text-red-500 text-xs italic">{errors.last_name}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
@@ -145,6 +195,9 @@ export default function Register() {
               value={password2} // valor del atributo de la entidad del backend
               onChange={(e) => onInputChange(e)} // llamada a la funcion que se encargara de actualizar el estado de la entidad
             />
+            {errors.password2 && (
+              <p className="text-red-500 text-xs italic">{errors.password2}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
