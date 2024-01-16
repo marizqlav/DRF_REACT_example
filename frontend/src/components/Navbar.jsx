@@ -1,16 +1,39 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useAuthContext } from "../context/authContext";
+import { Link, useNavigate } from "react-router-dom";
+
+import Swal from "sweetalert2";
+
+import { useAuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   //agrergar el contexto de autenticacion
   const { isAuthenticated, logout } = useAuthContext();
 
+  //para redireccionar al usuario
+  let navigate = useNavigate();
+
   //funcion para cerrar sesion
   const Logout = () => {
-    logout();
+    Swal.fire({
+      title: "¿Estas seguro de que quieres cerrar sesión?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        Swal.fire({
+          title: "Sesión cerrada",
+          text: "has cerrado sesión con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navigate("/");
+      }
+    });
   };
-  
+
   return (
     <header className="text-white body-font bg-blue-800">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">

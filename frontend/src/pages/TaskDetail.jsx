@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 //show de tareas
 export default function TaskDetail() {
@@ -25,10 +26,27 @@ export default function TaskDetail() {
 
   //implementacion del metodo DELETE de la API REST para borrar una tarea
   async function deleteTask() {
-    await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
-      method: "DELETE",
+    Swal.fire({
+      title: "¿Estas seguro de que quieres eliminar la tarea?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+          method: "DELETE",
+        });
+        navegate("/tasks");
+        Swal.fire({
+          title: "Tarea eliminada",
+          text: "ha eliminado la tarea con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navegate("/");
+      }
     });
-    navegate("/tasks");
   }
 
   return (

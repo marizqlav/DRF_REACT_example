@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function CreateProject() {
   // 1) definimos el estado inicial de la tarea
@@ -54,6 +55,23 @@ export default function CreateProject() {
   // 7) llamar al metodo de la API del post
   async function createProject(e) {
     e.preventDefault();
+    Swal.fire({
+      title: "¿Estas seguro de que quieres crear un proyecto?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Sesión cerrada",
+          text: "has cerrado sesión con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navigate("/");
+      }
+    });
 
     // setear propiedad done de los proyectos en funcion de la propiedad done de las tareas
     const allTasksDone = project.tasks.every((task) => {
@@ -66,22 +84,38 @@ export default function CreateProject() {
       ...project,
       done: allTasksDone,
     };
+    Swal.fire({
+      title: "¿Estas seguro de que quieres cerrar sesión?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch("http://127.0.0.1:8000/api/projects/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProject),
+        });
 
-    const response = await fetch("http://127.0.0.1:8000/api/projects/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedProject),
+        // validamos los errores del backend
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data);
+          return;
+        }
+        navigate("/projects");
+        Swal.fire({
+          title: "Proyecto creado",
+          text: "has creado el proyecto con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navigate("/");
+      }
     });
-
-    // validamos los errores del backend
-    if (response.status === 400) {
-      const data = await response.json();
-      setErrors(data);
-      return;
-    }
-    navigate("/projects");
   }
 
   // 8) creamos la funcion que se encargara de actualizar el estado de la relacion muchos a muchos

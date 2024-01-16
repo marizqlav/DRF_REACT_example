@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Register() {
   //1) creamos el estado del formulario de registro
@@ -35,30 +36,47 @@ export default function Register() {
   async function handleSubmit(e) {
     //onFormSubmit == handleSubmit
     e.preventDefault();
+    Swal.fire({
+      title: "¿Estas seguro de que quieres registrarte?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        //8)invocar a la funcion de validacion
+        const errors = validateForm();
 
-    //8)invocar a la funcion de validacion
-    const errors = validateForm();
+        //9)comprobar si el tamaño de JSON de los errores es >0  para actualizar el estado de los errores(=>existen errores)
+        if (Object.keys(errors).length > 0) {
+          setErrors(errors);
+          return;
+        }
 
-    //9)comprobar si el tamaño de JSON de los errores es >0  para actualizar el estado de los errores(=>existen errores)
-    if (Object.keys(errors).length > 0) {
-      setErrors(errors);
-      return;
-    }
+        const response = await fetch("http://127.0.0.1:8000/auth/users/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
+        //6)validamos los cambios del data
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data);
+          return;
+        }
+        navegate("/login");
 
-    const response = await fetch("http://127.0.0.1:8000/auth/users/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
+        Swal.fire({
+          title: "Registrado",
+          text: "te has registrado con exito, debes de iniciar sesion para autenticarte",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navegate("/");
+      }
     });
-    //6)validamos los cambios del data
-    if (response.status === 400) {
-      const data = await response.json();
-      setErrors(data);
-      return;
-    }
-    navegate("/login");
   }
 
   //7) crear la funcion auxiliar que se encargara de validar las validaciones extra que no se valida en el backend

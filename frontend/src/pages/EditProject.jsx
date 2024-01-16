@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function EditProject() {
   //1)declarar el estado inicial de la entidad
@@ -52,21 +53,41 @@ export default function EditProject() {
   //8)creamos la funcion que se encarga de llamar al metodo de la API REST de editar
   async function editProject(e) {
     e.preventDefault();
-    const response = await fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(project),
-    });
+    Swal.fire({
+      title: "¿Estas seguro de que quieres editar el proyecto?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/projects/${id}/`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(project),
+          }
+        );
 
-    //9)validamos los los campos de los errores
-    if (response.status === 400) {
-      const data = await response.json();
-      setErrors(data);
-      return;
-    }
-    navigate("/projects");
+        //9)validamos los los campos de los errores
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data);
+          return;
+        }
+        navigate("/projects");
+        Swal.fire({
+          title: "Editar proyecto",
+          text: "has editado el proyecto con exito",
+          icon: "success",
+        });
+      } else if (result.isDenied) {
+        navigate("/");
+      }
+    });
   }
 
   return (
