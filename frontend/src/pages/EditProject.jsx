@@ -38,7 +38,7 @@ export default function EditProject() {
 
   //6)hacemos peticion a la API(show) para obtener la entidad
   async function getProjectById() {
-    const response = await fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
+    const response = await fetch(`https://mario.pythonanywhere.com/api/projects/${id}/`, {
       method: "GET",
     });
     const data = await response.json();
@@ -62,7 +62,7 @@ export default function EditProject() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/projects/${id}/`,
+          `https://mario.pythonanywhere.com/api/projects/${id}/`,
           {
             method: "PUT",
             headers: {

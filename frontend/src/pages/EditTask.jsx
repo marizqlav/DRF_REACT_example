@@ -37,7 +37,7 @@ export default function EditTask() {
 
   //5) hacemos peticion a la API para obtener la tarea
   async function getTaskById() {
-    const response = await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+    const response = await fetch(`https://mario.pythonanywhere.com/api/tasks/${id}/`, {
       method: "GET",
     });
     const data = await response.json();
@@ -60,7 +60,7 @@ export default function EditTask() {
       denyButtonText: `No`,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+        const response = await fetch(`https://mario.pythonanywhere.com/api/tasks/${id}/`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json",
