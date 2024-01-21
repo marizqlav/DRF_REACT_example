@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const suscriptions = [
@@ -43,7 +44,7 @@ export default function Home() {
         </div>
         <div className="flex flex-wrap -m-4">
           {suscriptions.map((suscription, index) => (
-            <div className="p-4 xl:w-1/4 md:w-1/2 w-full">
+            <div className="p-4 xl:w-1/3 md:w-1/2 w-full">
               <div className="h-full p-6 rounded-lg border-2 border-gray-300 flex flex-col relative overflow-hidden">
                 <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
                   {suscription.name.toUpperCase()}
@@ -74,8 +75,15 @@ export default function Home() {
                     {s}
                   </p>
                 ))}
-                <button className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded">
-                  Button
+                <Link
+                  to={`/payments/${suscription.name}/${suscription.price}`}
+                  className={`flex items-center mt-auto border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded ${
+                    suscription.name == "standar"
+                      ? "bg-indigo-400 text-white hover:bg-indigo-600"
+                      : "text-gray-600 bg-gray-200"
+                  }`}
+                >
+                  Suscribirse
                   <svg
                     fill="none"
                     stroke="currentColor"
@@ -87,9 +95,12 @@ export default function Home() {
                   >
                     <path d="M5 12h14M12 5l7 7-7 7"></path>
                   </svg>
-                </button>
+                </Link>
                 <p className="text-xs text-gray-500 mt-3">
-                  Literally you probably haven't heard of them jean shorts.
+                  Todas las caracteristicas de la version{" "}
+                  <span className="text-red-700 text-sm">
+                    {suscription.name.toUpperCase()}
+                  </span>
                 </p>
               </div>
             </div>

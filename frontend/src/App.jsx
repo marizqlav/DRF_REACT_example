@@ -17,6 +17,8 @@ import CreateProject from "./pages/CreateProject";
 import EditProject from "./pages/EditProject";
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register";
+import Subscription from "./components/Subscription";
+import SuccessSubcripion from "./components/SuccessSubcripion";
 
 //authentification and routes
 import { AuthContextProvider } from "./context/authContext";
@@ -55,6 +57,12 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
             </Route>
+            {/*Subcripciones */}
+            <Route
+              path="/payments/:suscriptionName/:suscriptionPrice"
+              element={<Subscription />}
+            />
+            <Route path="/payment/success" element={<SuccessSubcripion />} />
           </Routes>
           <Footer />
         </Router>

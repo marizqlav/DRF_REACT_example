@@ -65,7 +65,7 @@ class StripeCustomer(APIView):
                     "username": username,
                 }
             )
-            return Response(status=status.HTTP_201_CREATED, data={'ID DEL CLIENTE': customer.id})
+            return Response(status=status.HTTP_201_CREATED, data={'id del cliente': customer.id})
         except ValidationError as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=e.detail)
         except KeyError:
